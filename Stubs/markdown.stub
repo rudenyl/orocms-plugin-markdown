@@ -1,0 +1,18 @@
+<link href="/plugin-markdown/assets.css" rel="stylesheet">
+<script src="/plugin-markdown/assets.js"></script>
+<script>
+$(function() {
+    // set markdown
+    $('[role="md"]').each(function() {
+        var el = $(this),
+            target_ctx = el.attr('data-target') || false,
+            target_dom = target_ctx ? $(target_ctx) : el;
+
+        if (target_dom.length) {
+            var content = target_dom.text();
+            content = marked( $.trim(content) );
+            el.html(content);
+        }
+    });
+});
+</script>

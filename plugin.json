@@ -1,0 +1,25 @@
+{
+    "name": "MarkDown",
+    "title": "Markdown Renderer",
+    "alias": "markdown",
+    "description": "Uses GitHub Flavored Markdown (GFM), across the site--in issues, comments, and pull requests. It differs from standard Markdown (SM) in a few significant ways, and adds some additional functionality.",
+    "keywords": [],
+    "providers": [
+        "Plugins\\MarkDown\\MarkdownServiceProvider"
+    ],
+    "hooks": [
+        {
+            "event": "articles.onAfterRenderItem",
+            "class": "Plugins\\MarkDown\\Hooks\\ArticlesOnAfterRenderItem"
+        },
+        {
+            "event": "articles.admin.onBeforeRenderItem",
+            "class": "Plugins\\MarkDown\\Hooks\\ArticlesAdminOnBeforeRenderItem"
+        },
+        {
+            "event": "articles.admin.onAfterRenderItem",
+            "class": "Plugins\\MarkDown\\Hooks\\ArticlesAdminOnAfterRenderItem"
+        }
+    ],
+    "files": []
+}

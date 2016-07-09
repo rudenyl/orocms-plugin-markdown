@@ -1,0 +1,52 @@
+<link href="/plugin-markdown/assets.css" rel="stylesheet">
+<script src="/plugin-markdown/assets.js"></script>
+<script>
+$(function() {
+    // markdown editor
+    marked.setOptions({
+        gfm: true,
+        tables: true,
+        breaks: true,
+        sanitize: true,
+        smartLists: true
+    });
+
+    (function() {
+        var textarea = $('textarea, [role="md"]')
+            .hide();
+        var editor = $('<div id="editor" />')
+            .text(textarea.html())
+            .insertAfter(textarea);
+
+        editor.markdownEditor({
+            preview: true,
+            fullscreen: false,
+            onPreview: function (content, callback) {
+                content = content.replace(/<br>/g, "!!!", content);
+                content = marked(content);
+                content = content.replace(/!!!/g, '<br>', content);
+                callback(content);
+            }
+        });
+
+        $('form').on('submit', function() {
+            // get markdown content
+            var content = $('#editor').markdownEditor('content');
+            $('[name="description"]').val(content);
+
+            if (content == '') {
+                Notify.alert({
+                    options: {
+                        message: 'Article content seems to be empty. Do you mind if you add somethin\' in there?'
+                    }
+                });
+                return false;
+            }
+
+            App.set('page_exit_confirmation', false);
+            return true;
+        });
+
+    })();
+});
+</script>
