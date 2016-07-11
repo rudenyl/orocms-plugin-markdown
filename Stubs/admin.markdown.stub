@@ -12,32 +12,52 @@ $(function() {
     });
 
     (function() {
-        var textarea = $('textarea, [role="md"]')
-            .hide();
-        var editor = $('<div id="editor" />')
-            .text(textarea.html())
-            .insertAfter(textarea);
+        $('textarea[role="wysiwyg"]').each(function(i, textarea) {
+            var $textarea = $(textarea).hide();
+            var id = ['markdown-editor', textarea.id || ['textarea',i].join('')].join(':');
+            var editor = $('<div role="markdown-editor" />')
+                .data('target', $textarea)
+                .text($textarea.html())
+                .insertAfter($textarea);
 
-        editor.markdownEditor({
-            preview: true,
-            fullscreen: false,
-            onPreview: function (content, callback) {
-                content = content.replace(/<br>/g, "!!!", content);
-                content = marked(content);
-                content = content.replace(/!!!/g, '<br>', content);
-                callback(content);
-            }
+            editor.markdownEditor({
+                preview: true,
+                fullscreen: false,
+                onPreview: function (content, callback) {
+                    content = content.replace(/<br>/g, "!!!", content);
+                    content = marked(content);
+                    content = content.replace(/!!!/g, '<br>', content);
+                    callback(content);
+                }
+            });
         });
 
         $('form').on('submit', function() {
-            // get markdown content
-            var content = $('#editor').markdownEditor('content');
-            $('[name="description"]').val(content);
+            // wysiwygs
+            var required = [];
+            $('[role="markdown-editor"]').each(function() {
+                var _ = $(this);
+                var $target = _.data('target') || false;
+                var content = _.markdownEditor('content');
+                var is_required = $target 
+                    ? $target.attr('required') || false
+                    : false;
 
-            if (content == '') {
+                if ($target === false) return false;
+
+                if (is_required && /1|true|required/i.test(is_required)) {
+                    if (content == '' || content == '<p><br></p>') {
+                        var title = $target.data('title') || $target[0].id || $target[0].name;
+                        title && required.push(title);
+                    }
+                    else $target.val(content);
+                }
+            });
+
+            if (required.length) {
                 Notify.alert({
                     options: {
-                        message: 'Article content seems to be empty. Do you mind if you add somethin\' in there?'
+                        message: '%s content seems to be empty. Do you mind if you add somethin\' in there?'.replace(/%s/, required.join(', '))
                     }
                 });
                 return false;
