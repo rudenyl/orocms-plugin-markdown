@@ -49,9 +49,12 @@ $(function() {
                     if (content == '' || content == '<p><br></p>') {
                         var title = $target.data('title') || $target[0].id || $target[0].name;
                         title && required.push(title);
+
+                        return true;
                     }
-                    else $target.val(content);
                 }
+                
+                $target.val(['<markdown>', content, '</markdown>'].join(''));
             });
 
             if (required.length) {

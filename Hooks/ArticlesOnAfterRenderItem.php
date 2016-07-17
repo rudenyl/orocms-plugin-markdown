@@ -8,6 +8,6 @@ class ArticlesOnAfterRenderItem
     public function handle($view)
     {
         $buffer = (new Stub(__DIR__ . '/../Stubs/markdown.stub', []))->render();
-        $view->snippets[] = $buffer;
+        $view->getFactory()->startPush('header', $buffer);
     }   
 }
